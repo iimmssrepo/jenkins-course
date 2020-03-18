@@ -1,19 +1,20 @@
 version: '2'
 services:
-  jenkins:
-    image: jenkins/jenkins:lts
-    ports:
-      - "8080:8080"
-      - "50000:50000"
-    networks:
-      - jenkins
-    volumes:
-      - /var/jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
+  #jenkins:
+  #  image: jenkins/jenkins:lts
+  #  ports:
+  #    - "8080:8080"
+  #    - "50000:50000"
+  #  networks:
+  #    - jenkins
+  #  volumes:
+  #    - /var/jenkins_home:/var/jenkins_home
+  #    - /var/run/docker.sock:/var/run/docker.sock
   postgres:
     image: postgres:9.6
     networks:
-      - jenkins
+      jenkins:
+        ipv4_address: 172.25.0.10
     environment:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonarpasswd
@@ -25,15 +26,19 @@ services:
       - "9000:9000"
       - "9092:9092"
     networks:
-      - jenkins
+      jenkins:
+        ipv4_address: 172.25.0.11
     environment:
       SONARQUBE_JDBC_USERNAME: sonar
       SONARQUBE_JDBC_PASSWORD: sonarpasswd
       SONARQUBE_JDBC_URL: "jdbc:postgresql://postgres:5432/sonar"
-    depends_on: 
+    depends_on:
       - postgres
 
 networks:
   jenkins:
-
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.25.0.0/16
 
