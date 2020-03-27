@@ -6,7 +6,7 @@ node(label:'builder') {
     def myTestContainer = docker.image('node:4.6')
     myTestContainer.pull()
     myTestContainer.inside {
-      ls
+      sh 'ls -la'
     }
   }
 }
